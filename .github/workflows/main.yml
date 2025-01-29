@@ -44,8 +44,8 @@ jobs:
 
         # Unit test
         # Run the database
-        docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG my_db
-        docker run -p 8081:8080 -e APP_COLOR=$APP_COLOR -e DBHOST=${{ secrets.DBHOST }} -e DBPORT=${{ secrets.DBPORT }}  -e DBUSER=${{ secrets.DBUSER }}  -e DBPWD=${{ secrets.DBPWD }} my_app
+        docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG 
+        docker run -p 8081:8080 -e APP_COLOR=$APP_COLOR -e DBHOST=${{ secrets.DBHOST }} -e DBPORT=${{ secrets.DBPORT }}  -e DBUSER=${{ secrets.DBUSER }}  -e DBPWD=${{ secrets.DBPWD }} 
 
         docker ps
         echo "Pause for 10 seconds to let container start"
