@@ -31,6 +31,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_APP_REPOSITORY: clo835-jcaranay-assignment1-app-repo
         ECR_DB_REPOSITORY: clo835-jcaranay-assignment1-db-repo
+        DOCKER_NETWORK: local_network
         IMAGE_TAG: v0.2
         APP_COLOR: Blue
       run: |
@@ -44,13 +45,17 @@ jobs:
 
         # Create network
         echo Create Bridge Network
-        docker network create -d bridge --subnet 192.168.100.0/24 --gateway 192.168.100.1 local_network
+        docker network create -d bridge --subnet 192.168.100.0/24 --gateway 192.168.100.1 $DOCKER_NETWORK
 
 
         # Spawn containers
-        # Spawn Database container and store the IPAddress of it to DBHOST local variable
-        export DBHOST=docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} --network local_network --name db_container  db_img
 
+        # Spawn Database container and store container ID
+        DBCONID = docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} --network $DOCKER_NETWORK --name db_container  db_img
+
+        # Get DB IPAddress
+        DBHOST=$(docker inspect -f {{'.NetworkSettings.Networks.local_network.IPAddress'}} $DBCONID)
+        
         # Run application container
         echo Run Application
         docker run -p 8081:8080 \
@@ -59,7 +64,7 @@ jobs:
         -e DBPORT=${{ secrets.DBPORT }} \
         -e DBUSER=${{ secrets.DBUSER }} \
         -e DBPWD=${{ secrets.DBPWD }} \
-        --network local_network --name app_container app_img
+        --network $DOCKER_NETWORK --name app_container app_img
 
         # Unit test
         docker ps
