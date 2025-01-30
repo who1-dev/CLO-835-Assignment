@@ -29,7 +29,7 @@ jobs:
         ECR_APP_REPOSITORY: clo835-jcaranay-assignment1-app-repo
         ECR_DB_REPOSITORY: clo835-jcaranay-assignment1-db-repo
         DOCKER_NETWORK: local_network
-        IMAGE_TAG: v0.3
+        IMAGE_TAG: v0.4
         APP_COLOR: blue
       run: |
         ls -ltra
@@ -44,11 +44,9 @@ jobs:
         echo Create Bridge Network
         docker network create -d bridge --subnet 192.168.100.0/24 --gateway 192.168.100.1 $DOCKER_NETWORK
 
-
         # Spawn containers
 
         # Spawn Database container and store container ID
-
         # Run the Docker container and capture the container ID in the variable DBCONID
         echo Run Database
         DBCONID=$(docker run -d -e MYSQL_ROOT_PASSWORD="${{ secrets.DBPWD }}" --network "${DOCKER_NETWORK}" --name db_container $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG)
@@ -69,7 +67,6 @@ jobs:
         --network "${DOCKER_NETWORK}" --name app_container $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
 
  
-
         # Unit test
         docker ps
         echo "Pause for 10 seconds to let container start"
