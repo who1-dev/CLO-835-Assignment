@@ -1,5 +1,4 @@
 name: Deploy to ECR
-# updated ECR Repo week3-1
 on: 
   push:
     branches: [ dev ]
@@ -11,9 +10,7 @@ jobs:
     name: Build Image
     runs-on: ubuntu-latest
 
-
     steps:
-
     - name: Check out code
       uses: actions/checkout@v4
 
@@ -58,13 +55,9 @@ jobs:
 
         # Get DB IPAddress
         DBHOST=$(docker inspect -f {{'.NetworkSettings.Networks.local_network.IPAddress'}} $DBCONID)
+       
 
         sleep 10
-
-        docker ps
-        docker ps -a
-        
-        
         # Run application container
         echo Run Application
         docker run -p 8080:8080 \
@@ -81,8 +74,15 @@ jobs:
         docker ps
         echo "Pause for 10 seconds to let container start"
         sleep 10
-        curl localhost:8080 -vvv
 
-        # Push image to ECR REPO DB and APP
-        docker push db_img $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG
-        docker push app_img $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
+        # Test if the application is running
+        if curl localhost:8080 -vvv; then
+          echo "Application is running. Proceeding to push images."
+          
+          # Push image to ECR REPO DB and APP
+          docker push $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
+        else
+          echo "Failed to connect to application. Exiting."
+          exit 1
+        fi
