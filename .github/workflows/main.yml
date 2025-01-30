@@ -46,11 +46,12 @@ jobs:
         echo Build Application
         docker build -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG -f Dockerfile .
 
+        docker network create -d bridge --subnet 172.17.0.0/24 --gateway 172.17.0.1 test_network
 
         # Unit test
         # Run the database
         echo Run Database
-        docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG 
+        docker run -network test_network -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG 
         
         docker inspect $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG
 
