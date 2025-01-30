@@ -65,7 +65,7 @@ jobs:
         
         # Run application container
         echo Run Application
-        docker run -p 8081:8080 \
+        docker run -p 8080:8080 \
         -e APP_COLOR=$APP_COLOR \
         -e DBHOST=$DBHOST \
         -e DBPORT=${{ secrets.DBPORT }} \
@@ -73,13 +73,13 @@ jobs:
         -e DBPWD=${{ secrets.DBPWD }} \
         --network "${DOCKER_NETWORK}" --name app_container app_img
 
-        docker inspect app_container
+        docker logs app_container
 
         # Unit test
         docker ps
         echo "Pause for 10 seconds to let container start"
         sleep 10
-        curl localhost:8081 -vvv
+        curl localhost:8080 -vvv
 
         # Push image to ECR REPO DB and APP
         docker push db_img $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG
