@@ -51,12 +51,17 @@ jobs:
         # Spawn containers
 
         # Spawn Database container and store container ID
-        
+
         # Run the Docker container and capture the container ID in the variable DBCONID
+        echo Run Database
         DBCONID=$(docker run -d -e MYSQL_ROOT_PASSWORD="${{ secrets.DBPWD }}" --network "${DOCKER_NETWORK}" --name db_container db_img)
 
         # Get DB IPAddress
         DBHOST=$(docker inspect -f {{'.NetworkSettings.Networks.local_network.IPAddress'}} $DBCONID)
+
+        echo $DBHOST
+        docker inspect $DBCONID
+        
         
         # Run application container
         echo Run Application
