@@ -31,15 +31,16 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_APP_REPOSITORY: clo835-jcaranay-assignment1-app-repo
         ECR_DB_REPOSITORY: clo835-jcaranay-assignment1-db-repo
-        IMAGE_TAG: v0.2
+        OLD_IMAGE_TAG: v0.1
+        NEW_IMAGE_TAG: v0.2
         APP_COLOR: Blue
       run: |
         ls -ltra
         # Docker build command
         # Database
-        docker build -t $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG -f Dockerfile_mysql .
+        docker build -t $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG -f Dockerfile_mysql .
         # Application
-        docker build -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG -f Dockerfile .
+        docker build -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG -f Dockerfile .
 
 
         # Unit test
@@ -53,5 +54,5 @@ jobs:
         curl localhost:8081 -vvv
 
         # Push image to ECR REPO DB and APP
-        docker push $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_DB_REPOSITORY:$NEW_IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$NEW_IMAGE_TAG
