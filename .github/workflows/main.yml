@@ -71,7 +71,9 @@ jobs:
         -e DBPORT=${{ secrets.DBPORT }} \
         -e DBUSER=${{ secrets.DBUSER }} \
         -e DBPWD=${{ secrets.DBPWD }} \
-        --network $DOCKER_NETWORK --name app_container app_img
+        --network "${DOCKER_NETWORK}" --name app_container app_img
+
+        docker inspect app_container
 
         # Unit test
         docker ps
