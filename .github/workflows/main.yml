@@ -59,6 +59,8 @@ jobs:
         # Get DB IPAddress
         DBHOST=$(docker inspect -f {{'.NetworkSettings.Networks.local_network.IPAddress'}} $DBCONID)
 
+        sleep 10
+
         docker ps
         docker ps -a
         
