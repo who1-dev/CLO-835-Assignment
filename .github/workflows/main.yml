@@ -60,7 +60,10 @@ jobs:
         -e DBUSER=${{ secrets.DBUSER }} \
         -e DBPWD=${{ secrets.DBPWD }} \
         $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG 
-               
+
+        docker logs $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG 
+        docker inspect $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG
+
         docker ps
         echo "Pause for 10 seconds to let container start"
         sleep 10
