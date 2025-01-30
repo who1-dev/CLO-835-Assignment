@@ -60,8 +60,8 @@ jobs:
         sleep 10
         # Run application container
         echo Run Application
-        docker run -p 8080:8080 \
-        -e APP_COLOR=$APP_COLOR \
+        docker run -d -p 8080:8080 \
+        -e APP_COLOR= \
         -e DBHOST=$DBHOST \
         -e DBPORT=${{ secrets.DBPORT }} \
         -e DBUSER=${{ secrets.DBUSER }} \
