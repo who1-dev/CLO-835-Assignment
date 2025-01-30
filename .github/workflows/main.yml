@@ -29,7 +29,7 @@ jobs:
         ECR_APP_REPOSITORY: clo835-jcaranay-assignment1-app-repo
         ECR_DB_REPOSITORY: clo835-jcaranay-assignment1-db-repo
         DOCKER_NETWORK: local_network
-        IMAGE_TAG: v0.2
+        IMAGE_TAG: v0.3
         APP_COLOR: blue
       run: |
         ls -ltra
