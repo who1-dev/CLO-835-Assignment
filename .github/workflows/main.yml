@@ -40,21 +40,32 @@ jobs:
         # Database
         echo Build Database
         docker build -t $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG -f Dockerfile_mysql .
+
+
         # Application
-         echo Build Application
+        echo Build Application
         docker build -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG -f Dockerfile .
 
 
-        # # Unit test
-        # # Run the database
-        # docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG 
-        # docker run -p 8081:8080 -e APP_COLOR=$APP_COLOR -e DBHOST=${{ secrets.DBHOST }} -e DBPORT=${{ secrets.DBPORT }}  -e DBUSER=${{ secrets.DBUSER }}  -e DBPWD=${{ secrets.DBPWD }} 
+        # Unit test
+        # Run the database
+        echo Run Database
+        docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG 
+        
+        echo Run Application
+        docker run -p 8081:8080 \
+        -e APP_COLOR=$APP_COLOR \
+        -e DBHOST=${{ secrets.DBHOST }} \
+        -e DBPORT=${{ secrets.DBPORT }} \
+        -e DBUSER=${{ secrets.DBUSER }} \
+        -e DBPWD=${{ secrets.DBPWD }} \
+        $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG 
+               
+        docker ps
+        echo "Pause for 10 seconds to let container start"
+        sleep 10
+        curl localhost:8081 -vvv
 
-        # docker ps
-        # echo "Pause for 10 seconds to let container start"
-        # sleep 10
-        # curl localhost:8081 -vvv
-
-        # # Push image to ECR REPO DB and APP
-        # docker push $ECR_REGISTRY/$ECR_DB_REPOSITORY:$NEW_IMAGE_TAG
-        # docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$NEW_IMAGE_TAG
+        # Push image to ECR REPO DB and APP
+        docker push $ECR_REGISTRY/$ECR_DB_REPOSITORY:$NEW_IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$NEW_IMAGE_TAG
