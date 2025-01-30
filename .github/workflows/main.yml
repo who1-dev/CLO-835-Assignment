@@ -29,7 +29,7 @@ jobs:
         ECR_APP_REPOSITORY: clo835-jcaranay-assignment1-app-repo
         ECR_DB_REPOSITORY: clo835-jcaranay-assignment1-db-repo
         DOCKER_NETWORK: local_network
-        IMAGE_TAG: v0.4
+        IMAGE_TAG: v0.5
         APP_COLOR: blue
       run: |
         ls -ltra
@@ -65,7 +65,6 @@ jobs:
         -e DBUSER=${{ secrets.DBUSER }} \
         -e DBPWD=${{ secrets.DBPWD }} \
         --network "${DOCKER_NETWORK}" --name app_container $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
-
  
         # Unit test
         docker ps
