@@ -31,20 +31,42 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_APP_REPOSITORY: clo835-jcaranay-assignment1-app-repo
         ECR_DB_REPOSITORY: clo835-jcaranay-assignment1-db-repo
-        OLD_IMAGE_TAG: v0.1
-        NEW_IMAGE_TAG: v0.2
+        IMAGE_TAG: v0.2
         APP_COLOR: Blue
       run: |
         ls -ltra
         # Docker build command
         # Database
-        echo Build Database
-        docker build -t $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG -f Dockerfile_mysql .
+        echo Build Database and Application
+        docker build -t db_img -f Dockerfile_mysql . 
+        docker build -t app_img -f Dockerfile . 
 
-        # Application
-        echo Build Application
-        docker build -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG -f Dockerfile .
+
+        # Create network
+        echo Create Bridge Network
+        docker network create -d bridge --subnet 192.168.100.0/24 --gateway 192.168.100.1 local_network
+
+
+        # Spawn containers
+        # Spawn Database container and store the IPAddress of it to DBHOST local variable
+        export DBHOST=docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} --network local_network --name db_container  db_img
+
+        # Run application container
+        echo Run Application
+        docker run -p 8081:8080 \
+        -e APP_COLOR=$APP_COLOR \
+        -e DBHOST=$DBHOST \
+        -e DBPORT=${{ secrets.DBPORT }} \
+        -e DBUSER=${{ secrets.DBUSER }} \
+        -e DBPWD=${{ secrets.DBPWD }} \
+        --network local_network --name app_container app_img
+
+        # Unit test
+        docker ps
+        echo "Pause for 10 seconds to let container start"
+        sleep 10
+        curl localhost:8081 -vvv
 
         # Push image to ECR REPO DB and APP
-        docker push $ECR_REGISTRY/$ECR_DB_REPOSITORY:$NEW_IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$NEW_IMAGE_TAG
+        docker push db_img $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG
+        docker push app_img $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
