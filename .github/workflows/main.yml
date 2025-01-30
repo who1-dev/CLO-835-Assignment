@@ -36,8 +36,8 @@ jobs:
         # Docker build command
         # Database
         echo Build Database and Application
-        docker build -t db_img -f Dockerfile_mysql . 
-        docker build -t app_img -f Dockerfile . 
+        docker build -t $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG -f Dockerfile_mysql . 
+        docker build -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG -f Dockerfile . 
 
 
         # Create network
@@ -51,7 +51,7 @@ jobs:
 
         # Run the Docker container and capture the container ID in the variable DBCONID
         echo Run Database
-        DBCONID=$(docker run -d -e MYSQL_ROOT_PASSWORD="${{ secrets.DBPWD }}" --network "${DOCKER_NETWORK}" --name db_container db_img)
+        DBCONID=$(docker run -d -e MYSQL_ROOT_PASSWORD="${{ secrets.DBPWD }}" --network "${DOCKER_NETWORK}" --name db_container $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG)
 
         # Get DB IPAddress
         DBHOST=$(docker inspect -f {{'.NetworkSettings.Networks.local_network.IPAddress'}} $DBCONID)
@@ -66,7 +66,7 @@ jobs:
         -e DBPORT=${{ secrets.DBPORT }} \
         -e DBUSER=${{ secrets.DBUSER }} \
         -e DBPWD=${{ secrets.DBPWD }} \
-        --network "${DOCKER_NETWORK}" --name app_container app_img
+        --network "${DOCKER_NETWORK}" --name app_container $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG
 
  
 
