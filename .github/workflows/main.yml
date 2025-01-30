@@ -52,6 +52,8 @@ jobs:
         echo Run Database
         docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG 
         
+        docker inspect $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG
+
         echo Run Application
         docker run -p 8081:8080 \
         -e APP_COLOR=$APP_COLOR \
@@ -61,8 +63,6 @@ jobs:
         -e DBPWD=${{ secrets.DBPWD }} \
         $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG 
 
-        docker logs $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG 
-        docker inspect $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG
 
         docker ps
         echo "Pause for 10 seconds to let container start"
