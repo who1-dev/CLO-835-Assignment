@@ -59,8 +59,8 @@ jobs:
         # Get DB IPAddress
         DBHOST=$(docker inspect -f {{'.NetworkSettings.Networks.local_network.IPAddress'}} $DBCONID)
 
-        echo $DBHOST
-        docker inspect $DBCONID
+        docker ps
+        docker ps -a
         
         
         # Run application container
@@ -73,7 +73,7 @@ jobs:
         -e DBPWD=${{ secrets.DBPWD }} \
         --network "${DOCKER_NETWORK}" --name app_container app_img
 
-        docker logs app_container
+ 
 
         # Unit test
         docker ps
