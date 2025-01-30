@@ -66,7 +66,7 @@ jobs:
         -e DBPORT=${{ secrets.DBPORT }} \
         -e DBUSER=${{ secrets.DBUSER }} \
         -e DBPWD=${{ secrets.DBPWD }} \
-        --network "${DOCKER_NETWORK}" --name app_container $ECR_REGISTRY/$ECR_DB_REPOSITORY:$IMAGE_TAG
+        --network "${DOCKER_NETWORK}" --name app_container $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
 
  
 
