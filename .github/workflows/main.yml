@@ -51,7 +51,7 @@ jobs:
         # Unit test
         # Run the database
         echo Run Database
-        docker run -network test_network -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG 
+        docker run -d -e MYSQL_ROOT_PASSWORD=${{ secrets.DBPWD }} $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG --network test_network
         
         docker inspect $ECR_REGISTRY/$ECR_DB_REPOSITORY:$OLD_IMAGE_TAG
 
@@ -62,7 +62,7 @@ jobs:
         -e DBPORT=${{ secrets.DBPORT }} \
         -e DBUSER=${{ secrets.DBUSER }} \
         -e DBPWD=${{ secrets.DBPWD }} \
-        $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG 
+        $ECR_REGISTRY/$ECR_APP_REPOSITORY:$OLD_IMAGE_TAG --network test_network
 
 
         docker ps
